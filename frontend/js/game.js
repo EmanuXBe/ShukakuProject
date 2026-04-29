@@ -132,7 +132,6 @@ function flashInvalid(box) {
 function handleMouseDown(e) {
   const cell = e.target.closest(".cell");
   if (!cell) return;
-  if (!cell.classList.contains("clue")) return;         // solo desde pistas
   if (cell.classList.contains("rect-confirmed")) return; // rectángulo ya fijado
 
   e.preventDefault(); // evita selección de texto durante el arrastre

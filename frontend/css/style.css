@@ -201,7 +201,7 @@ select {
   justify-content: center;
   align-items: center;
   font-size: 2rem;
-  cursor: default;
+  cursor: crosshair;
   user-select: none;
   transition: all 0.15s ease;
 }
