@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // empty' | { read -r f; echo \"$f\" | grep -qE '\\.py$' && /Users/emanuelbenavides/Library/Python/3.9/bin/ruff check --fix \"$f\" && /Users/emanuelbenavides/Library/Python/3.9/bin/ruff format \"$f\"; } 2>/dev/null || true",
+            "statusMessage": "Ruff: lint + format..."
+          }
+        ]
+      }
+    ]
+  }
+}
