@@ -9,6 +9,7 @@ def create_app() -> Flask:
     )
 
     from .routes import bp
+
     app.register_blueprint(bp)
 
     return app

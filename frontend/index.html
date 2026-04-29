@@ -21,7 +21,7 @@
                     <option value="hard">Difícil (10x10)</option>
                 </select>
             </div>
-            
+
             <div class="control-group buttons">
                 <button id="btn-restart" class="btn btn-secondary">Reiniciar</button>
                 <button id="btn-verify" class="btn btn-primary">Verificar</button>
@@ -35,6 +35,9 @@
                     <li>El área (casillas) del rectángulo sea igual a ese número.</li>
                     <li>Ningún rectángulo se superponga.</li>
                 </ul>
+                <p class="instructions-hint">
+                    Haz clic en un número y arrastra para dibujar su rectángulo.
+                </p>
             </div>
 
             <div class="panel-footer">
@@ -44,10 +47,18 @@
         </aside>
 
         <section class="board-container">
-            <div id="shikaku-board" class="grid-board">
-                </div>
+            <div id="shikaku-board" class="grid-board"></div>
         </section>
     </main>
+
+    <!-- Modal de victoria -->
+    <div id="win-modal" class="win-modal" role="dialog" aria-modal="true" aria-labelledby="win-title">
+        <div class="win-modal-content">
+            <h2 id="win-title">¡Puzzle Resuelto!</h2>
+            <p>Completaste el Shikaku correctamente.</p>
+            <button id="win-close" class="btn btn-primary">Nuevo Juego</button>
+        </div>
+    </div>
 
     <script src="js/api.js" defer></script>
     <script src="js/game.js" defer></script>

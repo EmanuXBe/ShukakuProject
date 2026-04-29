@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+
 from src.game.board import Board
+
 from .metrics import SolverMetrics
 
 
