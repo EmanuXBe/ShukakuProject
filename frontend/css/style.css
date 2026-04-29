@@ -202,7 +202,7 @@ select {
   user-select: none;
   transition: background-color 0.15s ease;
   position: relative;
-  
+
   /* Variables para el borde interno (por defecto a 0) */
   --b-top: 0px;
   --b-bottom: 0px;
@@ -220,10 +220,17 @@ select {
   color: var(--text-heading);
 }
 
-.cell.clue { cursor: grab; }
-.cell.clue.rect-confirmed { cursor: default; }
+.cell.clue {
+  cursor: grab;
+}
+.cell.clue.rect-confirmed {
+  cursor: default;
+}
 
-.is-dragging { cursor: grabbing !important; user-select: none; }
+.is-dragging {
+  cursor: grabbing !important;
+  user-select: none;
+}
 .is-dragging .cell:not(.rect-preview):hover {
   background-color: var(--cell-bg);
   box-shadow: none;
@@ -241,31 +248,39 @@ select {
 .cell.rect-confirmed {
   /* Usa la variable de color en línea, si no hay usa azul por defecto */
   background-color: var(--rect-color, rgba(59, 130, 246, 0.35));
-  
+
   /* Dibuja los bordes internos usando box-shadow para no romper el grid */
-  box-shadow: 
-    inset 0 var(--b-top) 0 0 rgba(0,0,0,0.4),
-    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0,0,0,0.4),
-    inset var(--b-left) 0 0 0 rgba(0,0,0,0.4),
-    inset calc(var(--b-right) * -1) 0 0 0 rgba(0,0,0,0.4);
+  box-shadow:
+    inset 0 var(--b-top) 0 0 rgba(0, 0, 0, 0.4),
+    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0, 0, 0, 0.4),
+    inset var(--b-left) 0 0 0 rgba(0, 0, 0, 0.4),
+    inset calc(var(--b-right) * -1) 0 0 0 rgba(0, 0, 0, 0.4);
 }
 
 /* Preserva los bordes y añade brillo al hacer hover sobre un rectángulo confirmado */
 .cell.rect-confirmed:hover {
   filter: brightness(1.05);
-  box-shadow: 
+  box-shadow:
     inset 0 0 10px rgba(255, 255, 255, 0.3),
-    inset 0 var(--b-top) 0 0 rgba(0,0,0,0.4),
-    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0,0,0,0.4),
-    inset var(--b-left) 0 0 0 rgba(0,0,0,0.4),
-    inset calc(var(--b-right) * -1) 0 0 0 rgba(0,0,0,0.4);
+    inset 0 var(--b-top) 0 0 rgba(0, 0, 0, 0.4),
+    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0, 0, 0, 0.4),
+    inset var(--b-left) 0 0 0 rgba(0, 0, 0, 0.4),
+    inset calc(var(--b-right) * -1) 0 0 0 rgba(0, 0, 0, 0.4);
 }
 
 /* Activadores de bordes (inyectados por JS) */
-.cell.border-top { --b-top: 3px; }
-.cell.border-bottom { --b-bottom: 3px; }
-.cell.border-left { --b-left: 3px; }
-.cell.border-right { --b-right: 3px; }
+.cell.border-top {
+  --b-top: 3px;
+}
+.cell.border-bottom {
+  --b-bottom: 3px;
+}
+.cell.border-left {
+  --b-left: 3px;
+}
+.cell.border-right {
+  --b-right: 3px;
+}
 
 /* Flash rojo al intentar un movimiento inválido */
 .cell.rect-invalid {
@@ -297,7 +312,9 @@ select {
   backdrop-filter: blur(3px);
 }
 
-.win-modal.visible { display: flex; }
+.win-modal.visible {
+  display: flex;
+}
 
 .win-modal-content {
   background: var(--panel-bg);
@@ -313,6 +330,18 @@ select {
   align-items: center;
 }
 
-.win-modal-content h2 { margin: 0; font-size: 1.8rem; color: var(--text-heading); }
-.win-modal-content p { margin: 0; color: var(--text-main); font-size: 1rem; }
-.win-modal-content .btn { margin-top: 0.5rem; padding: 0.8rem 2rem; width: auto; }
+.win-modal-content h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--text-heading);
+}
+.win-modal-content p {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 1rem;
+}
+.win-modal-content .btn {
+  margin-top: 0.5rem;
+  padding: 0.8rem 2rem;
+  width: auto;
+}

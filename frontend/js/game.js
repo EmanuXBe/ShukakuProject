@@ -2,26 +2,26 @@
  * game.js
  */
 
-const boardContainer  = document.getElementById("shikaku-board");
+const boardContainer = document.getElementById("shikaku-board");
 const difficultySelect = document.getElementById("difficulty-selector");
-const btnRestart      = document.getElementById("btn-restart");
-const btnVerify       = document.getElementById("btn-verify");
-const winModal        = document.getElementById("win-modal");
-const winClose        = document.getElementById("win-close");
+const btnRestart = document.getElementById("btn-restart");
+const btnVerify = document.getElementById("btn-verify");
+const winModal = document.getElementById("win-modal");
+const winClose = document.getElementById("win-close");
 
 let cellGrid = [];
 
 // Paleta de colores para asignar dinámicamente a los rectángulos
 const RECT_COLORS = [
-  "rgba(255, 107, 107, 0.5)",  // Rojo coral
-  "rgba(46, 204, 113, 0.5)",   // Verde esmeralda
-  "rgba(52, 152, 219, 0.5)",   // Azul claro
-  "rgba(155, 89, 182, 0.5)",   // Morado amatista
-  "rgba(241, 196, 15, 0.6)",   // Amarillo sol
-  "rgba(230, 126, 34, 0.5)",   // Naranja zanahoria
-  "rgba(26, 188, 156, 0.5)",   // Turquesa
-  "rgba(253, 121, 168, 0.5)",  // Rosa
-  "rgba(116, 185, 255, 0.5)"   // Azul pastel
+  "rgba(255, 107, 107, 0.5)", // Rojo coral
+  "rgba(46, 204, 113, 0.5)", // Verde esmeralda
+  "rgba(52, 152, 219, 0.5)", // Azul claro
+  "rgba(155, 89, 182, 0.5)", // Morado amatista
+  "rgba(241, 196, 15, 0.6)", // Amarillo sol
+  "rgba(230, 126, 34, 0.5)", // Naranja zanahoria
+  "rgba(26, 188, 156, 0.5)", // Turquesa
+  "rgba(253, 121, 168, 0.5)", // Rosa
+  "rgba(116, 185, 255, 0.5)", // Azul pastel
 ];
 
 // Contador para llevar registro de qué color usar en el siguiente rectángulo
@@ -49,8 +49,8 @@ const drag = {
 };
 
 function resetDrag() {
-  drag.active   = false;
-  drag.prevBox  = null;
+  drag.active = false;
+  drag.prevBox = null;
   drag.lastCell = null;
   document.body.classList.remove("is-dragging");
 }
@@ -101,7 +101,7 @@ function confirmRectangle(box) {
   for (let r = box.r1; r <= box.r2; r++) {
     for (let c = box.c1; c <= box.c2; c++) {
       const cell = cellGrid[r][c];
-      
+
       // Aplicar estado de completado y el color asignado
       cell.classList.add("rect-confirmed");
       cell.style.setProperty("--rect-color", color);
@@ -134,11 +134,11 @@ function handleMouseDown(e) {
   e.preventDefault();
 
   document.body.classList.add("is-dragging");
-  drag.active    = true;
+  drag.active = true;
   drag.originRow = +cell.dataset.row;
   drag.originCol = +cell.dataset.col;
-  drag.prevBox   = null;
-  drag.lastCell  = cell;
+  drag.prevBox = null;
+  drag.lastCell = cell;
 
   updatePreviewBox(
     boundingBox(drag.originRow, drag.originCol, drag.originRow, drag.originCol),
@@ -149,13 +149,15 @@ function handleMouseMove(e) {
   if (!drag.active) return;
 
   const cell = e.target.closest(".cell");
-  if (!cell || cell === drag.lastCell) return; 
+  if (!cell || cell === drag.lastCell) return;
   drag.lastCell = cell;
 
   updatePreviewBox(
     boundingBox(
-      drag.originRow, drag.originCol,
-      +cell.dataset.row, +cell.dataset.col,
+      drag.originRow,
+      drag.originCol,
+      +cell.dataset.row,
+      +cell.dataset.col,
     ),
   );
 }
@@ -171,7 +173,10 @@ async function handleMouseUp() {
 
   try {
     const result = await apiMakeMove(
-      finalBox.r1, finalBox.c1, finalBox.r2, finalBox.c2,
+      finalBox.r1,
+      finalBox.c1,
+      finalBox.r2,
+      finalBox.c2,
     );
 
     if (result.valid) {
@@ -236,7 +241,7 @@ function showWinModal() {
 
 boardContainer.addEventListener("mousedown", handleMouseDown);
 boardContainer.addEventListener("mousemove", handleMouseMove);
-document.addEventListener("mouseup",         handleMouseUp);
+document.addEventListener("mouseup", handleMouseUp);
 boardContainer.addEventListener("dragstart", (e) => e.preventDefault());
 
 difficultySelect.addEventListener("change", initGame);
