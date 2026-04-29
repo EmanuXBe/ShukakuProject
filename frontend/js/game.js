@@ -1,27 +1,54 @@
 /**
- * Game UI — renders the board and wires up user interaction.
- * Depends on api.js being loaded first.
- */
+ * Lógica de Interfaz */
 
-const boardContainer = document.getElementById("board-container");
-const metricsSection = document.getElementById("metrics");
-const metricNodes   = document.getElementById("metric-nodes");
-const metricTime    = document.getElementById("metric-time");
+const boardContainer = document.getElementById("shikaku-board");
+const difficultySelector = document.getElementById("difficulty-selector");
+const btnRestart = document.getElementById("btn-restart");
+const btnVerify = document.getElementById("btn-verify");
 
-document.getElementById("btn-new-game").addEventListener("click", async () => {
-  // TODO: call apiNewGame() and render the returned board
-});
+const boardSizes = {
+  easy: 5,
+  medium: 7,
+  hard: 10,
+};
 
-document.getElementById("btn-solve").addEventListener("click", async () => {
-  // TODO: call apiRunSolver(), render solution, show metrics panel
-});
-
-function renderBoard(boardData) {
-  // TODO: build and inject the board grid DOM from boardData
+function initGame() {
+  const size = boardSizes[difficultySelector.value];
+  renderBoard(size);
 }
 
-function renderMetrics(metrics) {
-  metricNodes.textContent = metrics.nodes_explored;
-  metricTime.textContent  = metrics.elapsed_seconds;
-  metricsSection.hidden   = false;
+function renderBoard(size) {
+  boardContainer.style.setProperty("--grid-size", size);
+  boardContainer.innerHTML = "";
+
+  for (let row = 0; row < size; row++) {
+    for (let col = 0; col < size; col++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.dataset.row = row;
+      cell.dataset.col = col;
+
+      // MOCK: Generar algunas pistas falsas para visualizar
+      if (Math.random() < 0.15) {
+        cell.classList.add("clue");
+        cell.textContent = Math.floor(Math.random() * 8) + 2;
+      }
+
+      cell.addEventListener("click", () => {
+        cell.classList.toggle("rect-selected");
+      });
+
+      boardContainer.appendChild(cell);
+    }
+  }
 }
+
+// Botones
+difficultySelector.addEventListener("change", initGame);
+btnRestart.addEventListener("click", initGame);
+btnVerify.addEventListener("click", () =>
+  alert("Lógica de verificación no implementada aún en Python."),
+);
+
+// Inicializar la cuadrícula al cargar
+initGame();

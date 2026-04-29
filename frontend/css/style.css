@@ -1,180 +1,223 @@
-/* 
-   ==========================================================================
-   Variables CSS globales
-   Utilizamos variables para mantener consistencia en colores y tamaños.
-   Esto facilita drásticamente hacer ajustes futuros o implementar un "modo oscuro".
-   ========================================================================== 
-*/
 :root {
-    --bg-color: #f4f7f6;
-    --text-color: #333;
-    --primary-color: #4a90e2;
-    --secondary-color: #e24a4a;
-    --panel-bg: #ffffff;
-    --grid-border: #999;
-    --cell-bg: #fff;
-    --cell-hover: #eef5ff;
-    --rect-color: rgba(74, 144, 226, 0.4); /* Semitransparente para ver las pistas debajo */
-    --rect-border: #2a6bb8;
+  --bg-color: #f0f4f8;
+  --text-main: #334155;
+  --text-heading: #1e293b;
+  --panel-bg: #ffffff;
+
+  --btn-red: #ff6b6b;
+  --btn-red-hover: #fa5252;
+  --btn-blue: #3b82f6;
+  --btn-blue-hover: #2563eb;
+
+  --board-border: #94a3b8;
+  --grid-line: #cbd5e1;
+
+  --cell-bg: #ffffff;
+  --cell-hover: #bfdbfe;
+  --rect-fill: rgba(59, 130, 246, 0.4);
+
+  --font-main: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+  margin: 0;
+  font-family: var(--font-main);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+/*Cabecera*/
 .app-header {
-    text-align: center;
-    padding: 1rem;
-    background-color: var(--primary-color);
-    color: white;
+  text-align: center;
+  padding: 1.5rem 0;
 }
 
-/* 
-   ==========================================================================
-   Contenedor Principal (Flexbox)
-   --------------------------------------------------------------------------
-   Justificación: Flexbox es la herramienta ideal aquí porque el layout
-   es unidireccional (una fila). Permite que el panel lateral (aside) 
-   tenga un ancho fijo y el tablero (section) tome el resto del espacio fluido.
-   ========================================================================== 
-*/
+.app-header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-heading);
+}
+
+/*Layout Principal*/
 .game-container {
-    display: flex;
-    flex-direction: row;
-    max-width: 1000px;
-    margin: 2rem auto;
-    gap: 2rem;
-    padding: 0 1rem;
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 3rem;
+  padding: 0 2rem 2rem 2rem;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: center;
 }
 
-/* 
-   ==========================================================================
-   Panel Lateral
-   ========================================================================== 
-*/
+/*Panel Lateral*/
 .side-panel {
-    flex: 0 0 260px; /* Tamaño fijo, no crece (0), no se encoge (0), base 260px */
-    background: var(--panel-bg);
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    
-    /* Usamos Flexbox en columna para organizar verticalmente los controles */
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+  flex: 0 0 300px;
+  background: var(--panel-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.control-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.control-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-heading);
 }
 
+select {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 6px;
+  border: 1px solid var(--grid-line);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+  outline: none;
+  color: var(--text-main);
+  background-color: #fff;
+  cursor: pointer;
+}
+
+/*Botones*/
 .buttons {
-    flex-direction: row;
-    justify-content: space-between;
+  display: flex;
+  gap: 1rem;
 }
 
 .btn {
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
+  flex: 1;
+  padding: 0.8rem 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
 }
 
-.btn-primary { background: var(--primary-color); color: white; }
-.btn-primary:hover { background: #357abd; }
+.btn:active {
+  transform: translateY(2px);
+}
 
-.btn-secondary { background: var(--secondary-color); color: white; }
-.btn-secondary:hover { background: #c0392b; }
+.btn-secondary {
+  background: var(--btn-red);
+  color: white;
+  box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+.btn-secondary:hover {
+  background: var(--btn-red-hover);
+}
+
+.btn-primary {
+  background: var(--btn-blue);
+  color: white;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+.btn-primary:hover {
+  background: var(--btn-blue-hover);
+}
+
+/* --- Instrucciones --- */
+.instructions {
+  margin-top: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--grid-line);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.instructions h3 {
+  margin-top: 0;
+  color: var(--text-heading);
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
 
 .instructions ul {
-    padding-left: 1.2rem;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
 }
 
-/* 
-   ==========================================================================
-   Contenedor del Tablero
-   ========================================================================== 
-*/
+.instructions li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.instructions li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--board-border);
+  font-weight: bold;
+}
+
+.panel-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--grid-line);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+/*TABLERO Y CELDAS*/
 .board-container {
-    flex: 1; /* Absorbe el espacio sobrante en el contenedor flex padre */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* 
-   ==========================================================================
-   Tablero (CSS Grid)
-   --------------------------------------------------------------------------
-   Justificación: CSS Grid es MUCHO mejor que Flexbox para esto porque 
-   está diseñado para layouts bidimensionales reales (filas Y columnas exactas).
-   Nos garantiza que las celdas estén alineadas perfectamente sin importar 
-   el contenido interior.
-   ========================================================================== 
-*/
 .grid-board {
-    display: grid;
-    /* 
-       Usamos una variable CSS (--grid-size) controlable por JavaScript.
-       'repeat' crea exactamente ese número de columnas/filas, 
-       cada una tomando 1 fracción equitativa (1fr).
-    */
-    grid-template-columns: repeat(var(--grid-size, 5), 1fr);
-    grid-template-rows: repeat(var(--grid-size, 5), 1fr);
-    
-    gap: 1px; /* Simulamos los bordes internos usando el espacio entre celdas */
-    background-color: var(--grid-border); /* Este fondo es el que se ve en el 'gap' */
-    border: 2px solid var(--grid-border);
-    
-    width: 100%;
-    max-width: 500px;
-    aspect-ratio: 1 / 1; /* Fuerzo a que el tablero sea siempre un cuadrado perfecto */
+  display: grid;
+  grid-template-columns: repeat(var(--grid-size, 7), 60px);
+  grid-template-rows: repeat(var(--grid-size, 7), 60px);
+
+  gap: 1px;
+  background-color: var(--grid-line);
+  border: 3px solid var(--board-border);
+
+  width: max-content;
+
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
 }
 
-/* 
-   ==========================================================================
-   Celdas y Pistas
-   ========================================================================== 
-*/
 .cell {
-    background-color: var(--cell-bg);
-    /* Flexbox de nuevo, pero ahora solo para centrar el texto dentro de la celda */
-    display: flex; 
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    cursor: pointer;
-    user-select: none; /* Evita que el usuario seleccione el número como si fuera texto al arrastrar */
-    transition: background-color 0.2s;
+  background-color: var(--cell-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
 }
 
 .cell:hover {
-    background-color: var(--cell-hover);
+  background-color: var(--cell-hover);
+  box-shadow: inset 0 0 10px rgba(59, 130, 246, 0.2);
 }
 
 .clue {
-    font-weight: bold;
-    color: var(--text-color);
+  font-weight: 700;
+  color: var(--text-heading);
 }
 
-/* 
-   ==========================================================================
-   Rectángulo Seleccionado / Dibujado
-   --------------------------------------------------------------------------
-   Define cómo se ve una celda cuando el jugador la ha marcado como parte 
-   de un rectángulo. El uso de colores "rgba" (con alfa) es crítico para 
-   que si la celda tiene una pista, el número siga siendo visible debajo 
-   de la capa de color.
-   ========================================================================== 
-*/
 .rect-selected {
-    background-color: var(--rect-color);
+  background-color: var(--rect-fill);
 }

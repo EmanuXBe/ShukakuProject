@@ -12,10 +12,9 @@
     </header>
 
     <main class="game-container">
-        <!-- Panel lateral con controles -->
         <aside class="side-panel">
             <div class="control-group">
-                <label for="difficulty-selector">Dificultad:</label>
+                <label for="difficulty-selector">Ajustes de Dificultad</label>
                 <select id="difficulty-selector">
                     <option value="easy">Fácil (5x5)</option>
                     <option value="medium" selected>Medio (7x7)</option>
@@ -37,29 +36,20 @@
                     <li>Ningún rectángulo se superponga.</li>
                 </ul>
             </div>
+
+            <div class="panel-footer">
+                <span id="timer-display">00:00:00</span>
+                <span id="score-display">0</span>
+            </div>
         </aside>
 
-        <!-- Contenedor principal para el tablero -->
         <section class="board-container">
-            <!-- El tablero se generará dinámicamente vía JS. Aquí se ilustra un demo de 5x5 -->
-            <div id="shikaku-board" class="grid-board" style="--grid-size: 5;">
-                <!-- Estas celdas son sólo un placeholder visual -->
-                <div class="cell"></div>
-                <div class="cell clue">2</div>
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell clue">3</div>
-                
-                <div class="cell"></div>
-                <div class="cell"></div>
-                <div class="cell rect-selected"></div>
-                <div class="cell rect-selected clue">2</div>
-                <div class="cell"></div>
-                <!-- ... el resto se inyecta con el script ... -->
-            </div>
+            <div id="shikaku-board" class="grid-board">
+                </div>
         </section>
     </main>
 
-    <script src="js/app.js" defer></script>
+    <script src="js/api.js" defer></script>
+    <script src="js/game.js" defer></script>
 </body>
 </html>
