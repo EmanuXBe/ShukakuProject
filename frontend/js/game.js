@@ -1,16 +1,6 @@
 /**
  * game.js
- *
- * Capas:
- *   coords  — cálculos puros de bounding-box (sin efectos de DOM)
- *   grid    — caché DOM: cellGrid[row][col] = HTMLElement  →  O(1) por celda
- *   drag    — máquina de estados del gesto de arrastre
- *   render  — delta-update de clases CSS sobre el grid cacheado
- *   init    — arranque y renderizado del tablero
- *   events  — delegación de eventos (un listener por tipo, no uno por celda)
  */
-
-// ─── Elementos raíz ──────────────────────────────────────────────────────────
 
 const boardContainer  = document.getElementById("shikaku-board");
 const difficultySelect = document.getElementById("difficulty-selector");
@@ -19,18 +9,24 @@ const btnVerify       = document.getElementById("btn-verify");
 const winModal        = document.getElementById("win-modal");
 const winClose        = document.getElementById("win-close");
 
-// ─── Caché de elementos DOM ───────────────────────────────────────────────────
-// Construida en renderBoard. Evita querySelector durante el gesto de arrastre.
-
-/** @type {HTMLElement[][]} */
 let cellGrid = [];
 
-// ─── Coords — funciones puras ─────────────────────────────────────────────────
+// Paleta de colores para asignar dinámicamente a los rectángulos
+const RECT_COLORS = [
+  "rgba(255, 107, 107, 0.5)",  // Rojo coral
+  "rgba(46, 204, 113, 0.5)",   // Verde esmeralda
+  "rgba(52, 152, 219, 0.5)",   // Azul claro
+  "rgba(155, 89, 182, 0.5)",   // Morado amatista
+  "rgba(241, 196, 15, 0.6)",   // Amarillo sol
+  "rgba(230, 126, 34, 0.5)",   // Naranja zanahoria
+  "rgba(26, 188, 156, 0.5)",   // Turquesa
+  "rgba(253, 121, 168, 0.5)",  // Rosa
+  "rgba(116, 185, 255, 0.5)"   // Azul pastel
+];
 
-/**
- * Normaliza dos esquinas en un bounding-box (r1 ≤ r2, c1 ≤ c2).
- * @returns {{ r1: number, c1: number, r2: number, c2: number }}
- */
+// Contador para llevar registro de qué color usar en el siguiente rectángulo
+let globalColorIndex = 0;
+
 function boundingBox(r1, c1, r2, c2) {
   return {
     r1: Math.min(r1, r2),
@@ -40,20 +36,15 @@ function boundingBox(r1, c1, r2, c2) {
   };
 }
 
-/** Comprueba si la celda (r, c) está dentro del box. */
 function boxContains(box, r, c) {
   return r >= box.r1 && r <= box.r2 && c >= box.c1 && c <= box.c2;
 }
-
-// ─── Estado del drag ──────────────────────────────────────────────────────────
 
 const drag = {
   active: false,
   originRow: 0,
   originCol: 0,
-  /** @type {{ r1: number, c1: number, r2: number, c2: number } | null} */
   prevBox: null,
-  /** @type {Element | null} — última celda procesada (evita trabajo duplicado) */
   lastCell: null,
 };
 
@@ -64,17 +55,9 @@ function resetDrag() {
   document.body.classList.remove("is-dragging");
 }
 
-// ─── Render — delta-update de clases CSS ─────────────────────────────────────
-
-/**
- * Actualiza la preview aplicando solo las diferencias entre el box anterior
- * y el nuevo. Complejidad: O(|prevBox Δ newBox|) — mínimo trabajo posible.
- * Evita recorrer todo el tablero o hacer querySelectorAll en cada mousemove.
- */
 function updatePreviewBox(newBox) {
   const prev = drag.prevBox;
 
-  // Quitar .rect-preview de celdas que salieron del box
   if (prev) {
     for (let r = prev.r1; r <= prev.r2; r++) {
       for (let c = prev.c1; c <= prev.c2; c++) {
@@ -85,7 +68,6 @@ function updatePreviewBox(newBox) {
     }
   }
 
-  // Añadir .rect-preview a celdas que entraron en el box
   for (let r = newBox.r1; r <= newBox.r2; r++) {
     for (let c = newBox.c1; c <= newBox.c2; c++) {
       if (!prev || !boxContains(prev, r, c)) {
@@ -97,7 +79,6 @@ function updatePreviewBox(newBox) {
   drag.prevBox = newBox;
 }
 
-/** Limpia la preview usando el box cacheado (sin querySelector). */
 function clearPreview() {
   if (!drag.prevBox) return;
   const { r1, c1, r2, c2 } = drag.prevBox;
@@ -109,10 +90,28 @@ function clearPreview() {
   drag.prevBox = null;
 }
 
+/**
+ * Confirma el rectángulo y le aplica un color diferente y el resaltado en sus bordes externos.
+ */
 function confirmRectangle(box) {
+  // Asignamos un color en orden desde nuestra paleta
+  const color = RECT_COLORS[globalColorIndex % RECT_COLORS.length];
+  globalColorIndex++;
+
   for (let r = box.r1; r <= box.r2; r++) {
     for (let c = box.c1; c <= box.c2; c++) {
-      cellGrid[r][c].classList.add("rect-confirmed");
+      const cell = cellGrid[r][c];
+      
+      // Aplicar estado de completado y el color asignado
+      cell.classList.add("rect-confirmed");
+      cell.style.setProperty("--rect-color", color);
+
+      // Aplicar clases de bordes SOLO si la celda se encuentra en un límite del rectángulo.
+      // El CSS usa variables (--b-top, etc.) con box-shadow para pintar estos bordes internamente.
+      if (r === box.r1) cell.classList.add("border-top");
+      if (r === box.r2) cell.classList.add("border-bottom");
+      if (c === box.c1) cell.classList.add("border-left");
+      if (c === box.c2) cell.classList.add("border-right");
     }
   }
 }
@@ -127,14 +126,12 @@ function flashInvalid(box) {
   }
 }
 
-// ─── Handlers de drag ────────────────────────────────────────────────────────
-
 function handleMouseDown(e) {
   const cell = e.target.closest(".cell");
   if (!cell) return;
-  if (cell.classList.contains("rect-confirmed")) return; // rectángulo ya fijado
+  if (cell.classList.contains("rect-confirmed")) return;
 
-  e.preventDefault(); // evita selección de texto durante el arrastre
+  e.preventDefault();
 
   document.body.classList.add("is-dragging");
   drag.active    = true;
@@ -152,7 +149,7 @@ function handleMouseMove(e) {
   if (!drag.active) return;
 
   const cell = e.target.closest(".cell");
-  if (!cell || cell === drag.lastCell) return; // misma celda → sin trabajo
+  if (!cell || cell === drag.lastCell) return; 
   drag.lastCell = cell;
 
   updatePreviewBox(
@@ -166,7 +163,7 @@ function handleMouseMove(e) {
 async function handleMouseUp() {
   if (!drag.active) return;
 
-  const finalBox = drag.prevBox; // guardar antes de limpiar
+  const finalBox = drag.prevBox;
   clearPreview();
   resetDrag();
 
@@ -189,10 +186,9 @@ async function handleMouseUp() {
   }
 }
 
-// ─── Inicialización ───────────────────────────────────────────────────────────
-
 async function initGame() {
   resetDrag();
+  globalColorIndex = 0; // Reiniciar los colores al comenzar una partida nueva
   boardContainer.classList.remove("board-locked");
   const difficulty = difficultySelect.value;
 
@@ -208,7 +204,6 @@ function renderBoard({ width, height, clues }) {
   boardContainer.style.setProperty("--grid-size", width);
   boardContainer.innerHTML = "";
 
-  // Construir caché 2D junto con el DOM (un solo pass)
   cellGrid = Array.from({ length: height }, () => new Array(width));
 
   const clueMap = Object.fromEntries(
@@ -234,15 +229,10 @@ function renderBoard({ width, height, clues }) {
   }
 }
 
-// ─── Modal de victoria ────────────────────────────────────────────────────────
-
 function showWinModal() {
   boardContainer.classList.add("board-locked");
   winModal.classList.add("visible");
 }
-
-// ─── Registro de eventos ─────────────────────────────────────────────────────
-// Delegación en boardContainer: un listener por tipo, no uno por celda.
 
 boardContainer.addEventListener("mousedown", handleMouseDown);
 boardContainer.addEventListener("mousemove", handleMouseMove);
@@ -275,7 +265,6 @@ winClose.addEventListener("click", () => {
   initGame();
 });
 
-// Cerrar modal con Escape (requisito ARIA para role="dialog")
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && winModal.classList.contains("visible")) {
     winModal.classList.remove("visible");

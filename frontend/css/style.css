@@ -27,7 +27,7 @@ body {
   min-height: 100vh;
 }
 
-/*Cabecera*/
+/* Cabecera */
 .app-header {
   text-align: center;
   padding: 1.5rem 0;
@@ -40,7 +40,7 @@ body {
   color: var(--text-heading);
 }
 
-/*Layout Principal*/
+/* Layout Principal */
 .game-container {
   display: flex;
   flex-direction: row;
@@ -53,7 +53,7 @@ body {
   justify-content: center;
 }
 
-/*Panel Lateral*/
+/* Panel Lateral */
 .side-panel {
   flex: 0 0 300px;
   background: var(--panel-bg);
@@ -85,7 +85,7 @@ select {
   cursor: pointer;
 }
 
-/*Botones*/
+/* Botones */
 .buttons {
   display: flex;
   gap: 1rem;
@@ -125,7 +125,7 @@ select {
   background: var(--btn-blue-hover);
 }
 
-/* --- Instrucciones --- */
+/* Instrucciones */
 .instructions {
   margin-top: 1rem;
   padding-top: 1.5rem;
@@ -172,7 +172,7 @@ select {
   color: var(--text-heading);
 }
 
-/*TABLERO Y CELDAS*/
+/* TABLERO Y CELDAS */
 .board-container {
   flex: 1;
   display: flex;
@@ -184,13 +184,10 @@ select {
   display: grid;
   grid-template-columns: repeat(var(--grid-size, 7), 60px);
   grid-template-rows: repeat(var(--grid-size, 7), 60px);
-
   gap: 1px;
   background-color: var(--grid-line);
   border: 3px solid var(--board-border);
-
   width: max-content;
-
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
   border-radius: 6px;
 }
@@ -203,7 +200,14 @@ select {
   font-size: 2rem;
   cursor: crosshair;
   user-select: none;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease;
+  position: relative;
+  
+  /* Variables para el borde interno (por defecto a 0) */
+  --b-top: 0px;
+  --b-bottom: 0px;
+  --b-left: 0px;
+  --b-right: 0px;
 }
 
 .cell:hover {
@@ -216,28 +220,15 @@ select {
   color: var(--text-heading);
 }
 
-/* Cursor especial sobre pistas arrastrables */
-.cell.clue {
-  cursor: grab;
-}
+.cell.clue { cursor: grab; }
+.cell.clue.rect-confirmed { cursor: default; }
 
-.cell.clue.rect-confirmed {
-  cursor: default;
-}
-
-/* Durante el arrastre: cursor global + sin hover highlight que interfiera */
-.is-dragging {
-  cursor: grabbing !important;
-  user-select: none;
-}
-
-/* Solo suprimir hover en celdas sin preview; las que tienen preview conservan su color */
+.is-dragging { cursor: grabbing !important; user-select: none; }
 .is-dragging .cell:not(.rect-preview):hover {
   background-color: var(--cell-bg);
   box-shadow: none;
 }
 
-/* Preview en tiempo real mientras se arrastra (sin transition para evitar lag) */
 .cell.rect-preview {
   background-color: rgba(59, 130, 246, 0.18);
   outline: 2px dashed rgba(59, 130, 246, 0.55);
@@ -245,14 +236,36 @@ select {
   transition: none;
 }
 
-/* Rectángulo confirmado y válido */
+/* ESTILOS PARA RECTÁNGULOS CONFIRMADOS */
+
 .cell.rect-confirmed {
-  background-color: rgba(59, 130, 246, 0.35);
+  /* Usa la variable de color en línea, si no hay usa azul por defecto */
+  background-color: var(--rect-color, rgba(59, 130, 246, 0.35));
+  
+  /* Dibuja los bordes internos usando box-shadow para no romper el grid */
+  box-shadow: 
+    inset 0 var(--b-top) 0 0 rgba(0,0,0,0.4),
+    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0,0,0,0.4),
+    inset var(--b-left) 0 0 0 rgba(0,0,0,0.4),
+    inset calc(var(--b-right) * -1) 0 0 0 rgba(0,0,0,0.4);
 }
 
+/* Preserva los bordes y añade brillo al hacer hover sobre un rectángulo confirmado */
 .cell.rect-confirmed:hover {
-  background-color: rgba(59, 130, 246, 0.45);
+  filter: brightness(1.05);
+  box-shadow: 
+    inset 0 0 10px rgba(255, 255, 255, 0.3),
+    inset 0 var(--b-top) 0 0 rgba(0,0,0,0.4),
+    inset 0 calc(var(--b-bottom) * -1) 0 0 rgba(0,0,0,0.4),
+    inset var(--b-left) 0 0 0 rgba(0,0,0,0.4),
+    inset calc(var(--b-right) * -1) 0 0 0 rgba(0,0,0,0.4);
 }
+
+/* Activadores de bordes (inyectados por JS) */
+.cell.border-top { --b-top: 3px; }
+.cell.border-bottom { --b-bottom: 3px; }
+.cell.border-left { --b-left: 3px; }
+.cell.border-right { --b-right: 3px; }
 
 /* Flash rojo al intentar un movimiento inválido */
 .cell.rect-invalid {
@@ -260,13 +273,11 @@ select {
   transition: background-color 0.1s;
 }
 
-/* Tablero bloqueado tras ganar */
 .grid-board.board-locked {
   pointer-events: none;
   opacity: 0.85;
 }
 
-/* Hint en instrucciones */
 .instructions-hint {
   margin-top: 0.8rem;
   font-style: italic;
@@ -274,8 +285,7 @@ select {
   font-size: 0.85rem;
 }
 
-/* ── Modal de victoria ─────────────────────────────────────────────── */
-
+/* Modal de victoria */
 .win-modal {
   display: none;
   position: fixed;
@@ -287,9 +297,7 @@ select {
   backdrop-filter: blur(3px);
 }
 
-.win-modal.visible {
-  display: flex;
-}
+.win-modal.visible { display: flex; }
 
 .win-modal-content {
   background: var(--panel-bg);
@@ -305,20 +313,6 @@ select {
   align-items: center;
 }
 
-.win-modal-content h2 {
-  margin: 0;
-  font-size: 1.8rem;
-  color: var(--text-heading);
-}
-
-.win-modal-content p {
-  margin: 0;
-  color: var(--text-main);
-  font-size: 1rem;
-}
-
-.win-modal-content .btn {
-  margin-top: 0.5rem;
-  padding: 0.8rem 2rem;
-  width: auto;
-}
+.win-modal-content h2 { margin: 0; font-size: 1.8rem; color: var(--text-heading); }
+.win-modal-content p { margin: 0; color: var(--text-main); font-size: 1rem; }
+.win-modal-content .btn { margin-top: 0.5rem; padding: 0.8rem 2rem; width: auto; }
